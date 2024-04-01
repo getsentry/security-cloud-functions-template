@@ -18,10 +18,11 @@ resource "google_service_account" "function_sa" {
   display_name = "Cloud Function Service Account for ${var.name}"
 }
 
-resource "google_cloudfunctions_function_iam_member" "involker" {
-  project        = google_cloudfunctions_function.function.project
-  region         = google_cloudfunctions_function.function.region
-  cloud_function = google_cloudfunctions_function.function.name
+
+resource "google_cloudfunctions2_function_iam_member" "invoker_allusers" {
+  project        = google_cloudfunctions2_function.function.project
+  location       = google_cloudfunctions2_function.function.location
+  cloud_function = google_cloudfunctions2_function.function.name
   role           = "roles/cloudfunctions.invoker"
   member         = "allUsers"
 }
@@ -32,7 +33,6 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.function_sa.name}"
 }
-
 
 resource "google_service_account_iam_member" "function_sa_actas_iam" {
   service_account_id = google_service_account.function_sa.name
@@ -68,31 +68,42 @@ resource "google_storage_bucket_object" "zip" {
   bucket = var.source_upload_bucket
 }
 
-resource "google_cloudfunctions_function" "function" {
+resource "google_cloudfunctions2_function" "function" {
   name        = var.name
+  location    = var.location
   description = var.description
-  runtime     = var.runtime
 
-  # Get the source code of the cloud function as a Zip compression
-  source_archive_bucket = var.source_upload_bucket
-  source_archive_object = google_storage_bucket_object.zip.name
+  build_config {
+    runtime     = var.runtime
+    entry_point = var.function_entrypoint
+    docker_repository = "projects/sec-dnr-infra/locations/us-west1/repositories/gcf-artifacts"
+    source {
+      storage_source {
+        # Get the source code of the cloud function as a Zip compression
+        bucket = var.source_upload_bucket
+        object = google_storage_bucket_object.zip.name
+      }
+    }
+    environment_variables = var.environment_variables
+  }
 
-  entry_point           = var.function_entrypoint
-  trigger_http          = var.trigger_http
-  timeout               = var.execution_timeout
-  available_memory_mb   = var.available_memory_mb
-  environment_variables = var.environment_variables
-  service_account_email = google_service_account.function_sa.email
-
-  dynamic "secret_environment_variables" {
-    for_each = var.secret_environment_variables
-    iterator = item
-    content {
-      key     = item.value.key
-      secret  = item.value.secret
-      version = item.value.version
+  service_config {
+    timeout_seconds       = var.execution_timeout
+    available_memory      = var.available_memory_mb
+    service_account_email = google_service_account.function_sa.email
+    ingress_settings      = var.ingress_settings
+    dynamic "secret_environment_variables" {
+      for_each = var.secret_environment_variables
+      iterator = item
+      content {
+        key        = item.value.key
+        secret     = item.value.secret
+        version    = item.value.version
+        project_id = local.project
+      }
     }
   }
+
 
   depends_on = [
     google_service_account_iam_member.function_sa_actas_iam,
