@@ -1,0 +1,22 @@
+.DS_Store
+
+# terraform and terragrunt
+.terragrunt/
+.terragrunt-cache/
+.terraform/
+
+sinks/*
+tests/*
+libraries/*
+
+# plan files
+plan
+*.plan
+*tfplan
+
+# state files
+*.tfstate
+*.tfstate.backup
+
+# best practice: version control your tf lock file
+!.terraform.lock.hcl
