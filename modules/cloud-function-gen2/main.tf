@@ -56,7 +56,7 @@ data "archive_file" "source" {
   type        = "zip"
   source_dir  = var.source_dir
   output_path = "${var.temp_zip_output_dir}/${var.name}.zip"
-  excludes    = concat(
+  excludes = concat(
     tolist(fileset("${path.module}/.terragrunt-cache", "**")),
     tolist(fileset("${path.module}/.terraform", "**")),
     var.files_to_exclude,

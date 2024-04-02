@@ -102,7 +102,7 @@ variable "ingress_settings" {
 variable "files_to_exclude" {
   description = "files to exclude from the "
   type        = list(string)
-  default = [    
+  default = [
     "terragrunt.hcl",
     ".terraform.lock.hcl",
     "locals.tf",

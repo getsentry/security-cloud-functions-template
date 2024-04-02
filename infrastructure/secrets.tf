@@ -1,5 +1,5 @@
 resource "google_secret_manager_secret" "secret" {
-  for_each = { for s in local.secrets : s => s }
+  for_each  = { for s in local.secrets : s => s }
   secret_id = each.value
   replication {
     auto {}
