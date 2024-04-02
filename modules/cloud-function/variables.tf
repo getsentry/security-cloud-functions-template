@@ -87,3 +87,21 @@ variable "secret_environment_variables" {
 
   default = []
 }
+
+variable "files_to_exclude" {
+  description = "files to exclude from the "
+  type        = list(string)
+  default = [
+    "terragrunt.hcl",
+    ".terraform.lock.hcl",
+    "locals.tf",
+    "variables.tf",
+    "main.tf",
+    "terraform.tfstate",
+    "terraform.tfstate.backup",
+    ".terraform.tfstate.lock.info",
+    ".terragrunt-module-manifest",
+    ".terragrunt-source-manifest",
+    ".terragrunt-source-version",
+  ]
+}

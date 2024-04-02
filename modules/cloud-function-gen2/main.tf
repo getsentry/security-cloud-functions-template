@@ -56,6 +56,11 @@ data "archive_file" "source" {
   type        = "zip"
   source_dir  = var.source_dir
   output_path = "${var.temp_zip_output_dir}/${var.name}.zip"
+  excludes    = concat(
+    tolist(fileset("${path.module}/.terragrunt-cache", "**")),
+    tolist(fileset("${path.module}/.terraform", "**")),
+    var.files_to_exclude,
+  )
 }
 
 resource "google_storage_bucket_object" "zip" {
@@ -74,8 +79,8 @@ resource "google_cloudfunctions2_function" "function" {
   description = var.description
 
   build_config {
-    runtime     = var.runtime
-    entry_point = var.function_entrypoint
+    runtime           = var.runtime
+    entry_point       = var.function_entrypoint
     docker_repository = "projects/${local.project}/locations/${var.location}/repositories/gcf-artifacts"
     source {
       storage_source {
