@@ -1,5 +1,5 @@
 terraform {
-  source = "../../infrastructure/cloud-function"
+  source = "../../modules/cloud-function"
 }
 
 # TODO: move dependency to module

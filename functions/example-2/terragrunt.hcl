@@ -1,5 +1,5 @@
 terraform {
-  source = "../../modules/cloud-function-gen2"
+  source = "../../modules/cloud-function"
 }
 
 # TODO: move dependency to module
@@ -13,15 +13,13 @@ dependency "infra" {
 }
 
 inputs = {
-  name              = "example-gen2"
-  description       = "gen2 cloud function example"
+  name              = "cloud-func-gen1"
+  description       = "example for cloud function gen1"
   source_dir        = "." 
-  execution_timeout = 120
-  available_memory_mb = "16M"
-
+  execution_timeout = 30
   secrets = [
     {
-      key = "example_token"
+      key = "greynoise_key"
       secret = dependency.infra.outputs.secret_ids["test_key_1"]
       version = "latest"
     }
