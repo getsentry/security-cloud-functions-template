@@ -24,3 +24,11 @@ locals {
   region  = "us-west1"
   zone    = "us-west1-b"
 }
+
+resource "google_storage_bucket" "staging_bucket" {
+  name          = "${local.project}-cloud-function-staging"
+  location      = "US"
+  force_destroy = true
+
+  public_access_prevention = "enforced"
+}

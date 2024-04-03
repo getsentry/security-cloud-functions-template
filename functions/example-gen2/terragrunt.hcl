@@ -17,7 +17,7 @@ inputs = {
   description       = "gen2 cloud function example"
   source_dir        = "." 
   execution_timeout = 120
-  available_memory_mb = "16M"
+  available_memory_mb = "128Mi"
 
   secrets = [
     {

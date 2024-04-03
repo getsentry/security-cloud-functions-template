@@ -70,7 +70,7 @@ resource "google_storage_bucket_object" "zip" {
   # Append to the MD5 checksum of the files's content
   # to force the zip to be updated as soon as a change occurs
   name   = "${var.source_object_prefix}${data.archive_file.source.output_md5}.zip"
-  bucket = var.source_upload_bucket
+  bucket = "${local.project}-cloud-function-staging"
 }
 
 resource "google_cloudfunctions_function" "function" {
@@ -79,7 +79,7 @@ resource "google_cloudfunctions_function" "function" {
   runtime     = var.runtime
 
   # Get the source code of the cloud function as a Zip compression
-  source_archive_bucket = var.source_upload_bucket
+  source_archive_bucket = "${local.project}-cloud-function-staging"
   source_archive_object = google_storage_bucket_object.zip.name
 
   entry_point           = var.function_entrypoint
