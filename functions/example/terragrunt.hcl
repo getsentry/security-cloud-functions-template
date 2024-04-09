@@ -7,7 +7,7 @@ dependency "infra" {
   config_path = "../../infrastructure"
   mock_outputs = {
     secret_ids = {
-      test_key_1  = "test_key_1"
+      test_key_1 = "test_key_1"
     }
   }
 }
@@ -15,12 +15,12 @@ dependency "infra" {
 inputs = {
   name              = "terragrunt-test"
   description       = "terragrunt test function"
-  source_dir        = "." 
+  source_dir        = "."
   execution_timeout = 30
   secrets = [
     {
-      key = "test_key"
-      secret = dependency.infra.outputs.secret_ids["test_key_1"]
+      key     = "test_key"
+      secret  = dependency.infra.outputs.secret_ids["test_key_1"]
       version = "latest"
     }
   ]

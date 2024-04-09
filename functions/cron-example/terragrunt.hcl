@@ -16,9 +16,9 @@ dependency "infra" {
 dependency "cloud-function" {
   config_path = "../example"
   mock_outputs = {
-    function_project = "local",
-    function_region = "us"
-    function_name = "example",
+    function_project     = "local",
+    function_region      = "us"
+    function_name        = "example",
     function_trigger_url = "https://google.com"
   }
 }
