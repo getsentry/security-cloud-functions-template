@@ -4,7 +4,7 @@ terraform {
 
 # TODO: move dependency to module
 dependency "infra" {
-  config_path = "../..//infrastructure"
+  config_path = "../../infrastructure"
   mock_outputs = {
     secret_ids = {
       test_key_1  = "test_key_1"
