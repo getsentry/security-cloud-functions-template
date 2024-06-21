@@ -15,6 +15,9 @@ output "secret_ids" {
 locals {
   secrets = [
     "test_key_1",
-    "test_key_2"
+    "test_key_2",
+    "GH_APP_ID",
+    "GH_APP_INSTALLATION_ID",
+    "GH_APP_PRI_KEY",
   ]
 }
