@@ -3,7 +3,7 @@ import requests
 import jwt
 import os
 
-# App ID can be found: https://github.com/settings/apps/<APP NAME>
+# App ID or client ID can be found: https://github.com/settings/apps/<APP NAME>
 GH_APP_ID = os.environ["GH_APP_ID"]
 # Installation ID can be found: https://github.com/organizations/<Organization-name>/settings/installations/<ID>
 GH_APP_INSTALLATION_ID = os.environ["GH_APP_INSTALLATION_ID"]
