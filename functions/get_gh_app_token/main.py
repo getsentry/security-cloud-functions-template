@@ -2,13 +2,14 @@ import datetime
 import requests
 import jwt
 import os
+import cryptography
 
 # App ID or client ID can be found: https://github.com/settings/apps/<APP NAME>
 GH_APP_ID = os.environ["GH_APP_ID"]
 # Installation ID can be found: https://github.com/organizations/<Organization-name>/settings/installations/<ID>
 GH_APP_INSTALLATION_ID = os.environ["GH_APP_INSTALLATION_ID"]
 # Private Key can be generated on: https://github.com/settings/apps/<APP NAME>
-# Remember to replace newlines in the private key file with \n
+# You will want to upload the PEM file to GCP Secret manager directly
 GH_APP_PRI_KEY = os.environ["GH_APP_PRI_KEY"]
 
 
