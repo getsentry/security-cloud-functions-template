@@ -31,7 +31,7 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
   for_each  = { for s in var.secret_environment_variables : s.key => s }
   secret_id = each.value.secret
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.function_sa.name}"
+  member    = "serviceAccount:${google_service_account.function_sa.email}"
 }
 
 resource "google_service_account_iam_member" "function_sa_actas_iam" {
