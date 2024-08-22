@@ -30,7 +30,7 @@ jobs:
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
-        workload_identity_provider: 'projects/719478497880/locations/global/workloadIdentityPools/gha-terraform-checker-pool/providers/gha-terraform-checker-provider'
+        workload_identity_provider: 'projects/546928617664/locations/global/workloadIdentityPools/gha-terraform-checker-pool/providers/gha-terraform-checker-provider'
         service_account: 'gha-cloud-functions-deployment@jeffreyhung-test.iam.gserviceaccount.com'
 
     - name: Plan
