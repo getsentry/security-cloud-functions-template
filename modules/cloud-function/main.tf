@@ -1,18 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = ">= 5.23.0"
-    }
-  }
-}
-
-provider "google" {
-  project = local.project
-  region  = local.region
-  zone    = local.zone
-}
-
 resource "google_service_account" "function_sa" {
   account_id   = "cf-${var.name}"
   display_name = "Cloud Function Service Account for ${var.name}"

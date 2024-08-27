@@ -1,0 +1,13 @@
+name: gh_app_example
+description: example for using github app in cloud function
+config: 
+  secrets:
+    - key: GH_APP_ID
+      secret: dependency.infra.outputs.secret_ids["GH_APP_ID"]
+      version: latest
+    - key: GH_APP_INSTALLATION_ID
+      secret: dependency.infra.outputs.secret_ids["GH_APP_INSTALLATION_ID"]
+      version: latest
+    - key: GH_APP_PRI_KEY
+      secret: dependency.infra.outputs.secret_ids["GH_APP_PRI_KEY"]
+      version: latest

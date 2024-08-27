@@ -1,0 +1,13 @@
+name: test
+description: test function
+config: 
+  runtime: python39
+  source_dir: "."
+  execution_timeout: 30
+  entry_point: main
+  trigger_http: true
+  available_memory_mb: 128
+  # secrets:
+  #   test_key:
+  #     secret: dependency.infra.outputs.secret_ids["test_key_1"]
+  #     version: latest

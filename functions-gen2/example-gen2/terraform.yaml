@@ -1,0 +1,12 @@
+name: gen2-test
+description: gen2 cloud function example
+config: 
+  timeout: 120
+  available_memory_mb: 128Mi
+  environment_variables: 
+    env_1: 123
+    env_2: 345
+  secrets:
+    - key: example_token
+      secret: dependency.infra.outputs.secret_ids["test_key_1"]
+      version: latest
