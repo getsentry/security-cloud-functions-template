@@ -87,7 +87,7 @@ resource "google_cloudfunctions2_function" "function" {
       iterator = item
       content {
         key        = item.value.key
-        secret     = module.infrastructure.google_secret_manager_secret.secret[item.value.secret].secret_id
+        secret     = var.secret_ids[item.value.secret]
         version    = item.value.version
         project_id = var.project
       }
@@ -96,6 +96,7 @@ resource "google_cloudfunctions2_function" "function" {
 
 
   depends_on = [
+    google_secret_manager_secret_iam_member.secret_iam,
     google_service_account_iam_member.function_sa_actas_iam,
     google_service_account_iam_member.deploy_sa_actas_iam,
     data.archive_file.source

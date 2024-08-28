@@ -30,6 +30,8 @@ variable "project" {
   type = string
 }
 
+variable "secret_ids" {}
+
 variable "source_object_prefix" {
   type        = string
   description = "String prefixing source upload objects"

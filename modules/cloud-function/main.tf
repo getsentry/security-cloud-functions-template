@@ -15,7 +15,7 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
   for_each  = { for s in var.secret_environment_variables : s.key => s }
   secret_id = each.value.secret
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.function_sa.name}"
+  member    = "serviceAccount:${google_service_account.function_sa.email}"
 }
 
 
@@ -79,7 +79,7 @@ resource "google_cloudfunctions_function" "function" {
     iterator = item
     content {
       key     = item.value.key
-      secret  = module.infrastructure.google_secret_manager_secret.secret[item.value.secret].secret_id
+      secret  = var.secret_ids[item.value.secret]
       version = item.value.version
     }
   }

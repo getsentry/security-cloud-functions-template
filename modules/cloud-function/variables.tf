@@ -8,6 +8,8 @@ variable "project" {
   type = string
 }
 
+variable "secret_ids" {}
+
 variable "source_dir" {
   type        = string
   description = "Directory containing source code, relative or absolute (relative preferred, think about CI/CD!)"
@@ -96,16 +98,6 @@ variable "files_to_exclude" {
   description = "files to exclude from the "
   type        = list(string)
   default = [
-    "terragrunt.hcl",
-    ".terraform.lock.hcl",
-    "locals.tf",
-    "variables.tf",
-    "main.tf",
-    "terraform.tfstate",
-    "terraform.tfstate.backup",
-    ".terraform.tfstate.lock.info",
-    ".terragrunt-module-manifest",
-    ".terragrunt-source-manifest",
-    ".terragrunt-source-version",
+    "terraform.yaml",
   ]
 }
