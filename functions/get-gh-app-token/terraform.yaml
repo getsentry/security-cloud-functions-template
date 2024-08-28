@@ -1,4 +1,4 @@
-name: gh-app-example
+name: get-gh-app-token
 description: example for using github app in cloud function
 cloud-function:  
   secrets:

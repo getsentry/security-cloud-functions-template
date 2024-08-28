@@ -31,3 +31,5 @@ def get_GH_APP_token(GH_APP_ID, GH_APP_INSTALLATION_ID, GH_APP_PRI_KEY):
 
 ### TO-DO ###
 # make this cloud function callable by providing the required inputs in webhook and return with the token
+def main(request):
+    return 0
