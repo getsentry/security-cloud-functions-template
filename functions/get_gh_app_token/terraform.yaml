@@ -3,11 +3,11 @@ description: example for using github app in cloud function
 cloud-function:  
   secrets:
     - key: GH_APP_ID
-      secret: dependency.infra.outputs.secret_ids["GH_APP_ID"]
+      secret: GH_APP_ID
       version: latest
     - key: GH_APP_INSTALLATION_ID
-      secret: dependency.infra.outputs.secret_ids["GH_APP_INSTALLATION_ID"]
+      secret: GH_APP_INSTALLATION_ID
       version: latest
     - key: GH_APP_PRI_KEY
-      secret: dependency.infra.outputs.secret_ids["GH_APP_PRI_KEY"]
+      secret: GH_APP_PRI_KEY
       version: latest

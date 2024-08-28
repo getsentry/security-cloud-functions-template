@@ -32,7 +32,7 @@ resource "google_service_account_iam_member" "deploy_sa_actas_iam" {
 }
 
 resource "google_project_iam_member" "function_sa_logwriter_iam" {
-  project = local.project
+  project = var.project
   role    = "roles/logging.logWriter"
   member  = "serviceAccount:${google_service_account.function_sa.email}"
 }
@@ -55,7 +55,7 @@ resource "google_storage_bucket_object" "zip" {
   # Append to the MD5 checksum of the files's content
   # to force the zip to be updated as soon as a change occurs
   name   = "${var.source_object_prefix}${data.archive_file.source.output_md5}.zip"
-  bucket = "${local.project}-cloud-function-staging"
+  bucket = "${var.project}-cloud-function-staging"
 }
 
 resource "google_cloudfunctions_function" "function" {
@@ -64,7 +64,7 @@ resource "google_cloudfunctions_function" "function" {
   runtime     = var.runtime
 
   # Get the source code of the cloud function as a Zip compression
-  source_archive_bucket = "${local.project}-cloud-function-staging"
+  source_archive_bucket = "${var.project}-cloud-function-staging"
   source_archive_object = google_storage_bucket_object.zip.name
 
   entry_point           = var.function_entrypoint
@@ -79,7 +79,7 @@ resource "google_cloudfunctions_function" "function" {
     iterator = item
     content {
       key     = item.value.key
-      secret  = item.value.secret
+      secret  = module.infrastructure.google_secret_manager_secret.secret[item.value.secret].secret_id
       version = item.value.version
     }
   }

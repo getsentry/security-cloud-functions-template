@@ -2,12 +2,15 @@ locals {
   gha_name        = "gha-terraform-checker"
   attribute_scope = "repository"
 }
+variable "project_id" {}
+variable "project" {}
+variable "region" {}
 
 resource "google_service_account" "gha_cloud_functions_deployment" {
   account_id   = "gha-cloud-functions-deployment"
   description  = "For use by Terraform and GitHub Actions to deploy DNR pipeline resources via security-cloud-functions repo"
   display_name = "gha-cloud-functions-deployment"
-  project      = local.project
+  project      = var.project
 }
 
 resource "google_iam_workload_identity_pool" "gha_terraform_checker_pool" {

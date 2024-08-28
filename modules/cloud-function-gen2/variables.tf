@@ -26,6 +26,10 @@ variable "runtime" {
   default     = "python39"
 }
 
+variable "project" {
+  type = string
+}
+
 variable "source_object_prefix" {
   type        = string
   description = "String prefixing source upload objects"

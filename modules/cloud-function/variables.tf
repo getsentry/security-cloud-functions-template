@@ -4,6 +4,10 @@ variable "name" {
   default     = "default-name"
 }
 
+variable "project" {
+  type = string
+}
+
 variable "source_dir" {
   type        = string
   description = "Directory containing source code, relative or absolute (relative preferred, think about CI/CD!)"
