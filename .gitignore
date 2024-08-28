@@ -1,15 +1,6 @@
 .DS_Store
 
-# terraform and terragrunt
-.terragrunt/
-.terragrunt-cache/
-.terraform/
-
-sinks/*
-tests/*
-libraries/*
-
-# plan files
+# terraform plan files
 plan
 *.plan
 *tfplan
@@ -17,6 +8,20 @@ plan
 # state files
 *.tfstate
 *.tfstate.backup
+.terraform/
+
+sinks/*
+tests/*
+libraries/*
+
+# state files
+*.tfstate
+*.tfstate.backup
 
 # best practice: version control your tf lock file
 !.terraform.lock.hcl
+
+# transient log files
+*.log
+*.list
+*.json
