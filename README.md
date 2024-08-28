@@ -1,5 +1,9 @@
 !!! WORK IN PROGRESS !!!
 
+# Security Cloud Functions Template
+A template to quickly spin up cloud functions and cron jobs in GCP using terraform, with dedicated/least-privileged service account and secure by default settings
+
+# Setup
 update the local variables in `main.tf` with your own GCP project and settings
 ```
 locals {
