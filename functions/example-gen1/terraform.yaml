@@ -1,8 +1,7 @@
-name: test
+name: example-gen1
 description: test function
 cloud-function: 
   runtime: python39
-  source_dir: "."
   execution_timeout: 30
   entry_point: main
   trigger_http: true
