@@ -16,12 +16,13 @@ module "cloud_function" {
   description                  = each.value.description
   project                      = var.project
   runtime                      = lookup(each.value.cloud-function, "runtime", "python39")
-  source_dir                   = lookup(each.value.cloud-function, "source_dir", ".")
+  source_dir                   = "${path.module}/${each.value.name}"
   execution_timeout            = lookup(each.value.cloud-function, "timeout", "30")
   trigger_http                 = lookup(each.value.cloud-function, "trigger_http", true)
-  available_memory_mb          = lookup(each.value.cloud-function, "available_memory_mb", "30")
+  available_memory_mb          = lookup(each.value.cloud-function, "available_memory_mb", "128")
   environment_variables        = lookup(each.value.cloud-function, "environment_variables", null)
   secret_environment_variables = lookup(each.value.cloud-function, "secrets", [])
+  secret_ids                   = var.secret_ids
 }
 
 module "cloud_function_gen2" {
@@ -32,12 +33,13 @@ module "cloud_function_gen2" {
   description                  = each.value.description
   project                      = var.project
   runtime                      = lookup(each.value.cloud-function-gen2, "runtime", "python39")
-  source_dir                   = lookup(each.value.cloud-function-gen2, "source_dir", ".")
+  source_dir                   = "${path.module}/${each.value.name}"
   execution_timeout            = lookup(each.value.cloud-function-gen2, "timeout", "30")
   trigger_http                 = lookup(each.value.cloud-function-gen2, "trigger_http", true)
-  available_memory_mb          = lookup(each.value.cloud-function-gen2, "available_memory_mb", "30")
+  available_memory_mb          = lookup(each.value.cloud-function-gen2, "available_memory_mb", "128")
   environment_variables        = lookup(each.value.cloud-function-gen2, "environment_variables", null)
   secret_environment_variables = lookup(each.value.cloud-function-gen2, "secrets", [])
+  secret_ids                   = var.secret_ids
 }
 
 module "cronjob" {
