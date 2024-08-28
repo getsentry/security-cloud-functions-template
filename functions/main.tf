@@ -19,15 +19,70 @@ locals {
 
 module "cloud_function" {
   source   = "../modules/cloud-function"
-  for_each = { for config in local.terraform_configs : config.name => config }
+  for_each = { for config in local.terraform_configs : config.name => config if contains(keys(config), "cloud-function") }
 
   name                         = each.value.name
   description                  = each.value.description
-  runtime                      = lookup(each.value.config, "runtime", "python39")
-  source_dir                   = lookup(each.value.config, "source_dir", ".")
-  execution_timeout            = lookup(each.value.config, "timeout", "30")
-  trigger_http                 = lookup(each.value.config, "trigger_http", "30")
-  available_memory_mb          = lookup(each.value.config, "available_memory_mb", "30")
-  environment_variables        = lookup(each.value.config, "environment_variables", null)
-  secret_environment_variables = lookup(each.value.config, "secrets", [])
+  runtime                      = lookup(each.value.cloud-function, "runtime", "python39")
+  source_dir                   = lookup(each.value.cloud-function, "source_dir", ".")
+  execution_timeout            = lookup(each.value.cloud-function, "timeout", "30")
+  trigger_http                 = lookup(each.value.cloud-function, "trigger_http", true)
+  available_memory_mb          = lookup(each.value.cloud-function, "available_memory_mb", "30")
+  environment_variables        = lookup(each.value.cloud-function, "environment_variables", null)
+  secret_environment_variables = lookup(each.value.cloud-function, "secrets", [])
+}
+
+module "cloud_function_gen2" {
+  source   = "../modules/cloud-function-gen2"
+  for_each = { for config in local.terraform_configs : config.name => config if contains(keys(config), "cloud-function-gen2") }
+
+  name                         = each.value.name
+  description                  = each.value.description
+  runtime                      = lookup(each.value.cloud-function-gen2, "runtime", "python39")
+  source_dir                   = lookup(each.value.cloud-function-gen2, "source_dir", ".")
+  execution_timeout            = lookup(each.value.cloud-function-gen2, "timeout", "30")
+  trigger_http                 = lookup(each.value.cloud-function-gen2, "trigger_http", true)
+  available_memory_mb          = lookup(each.value.cloud-function-gen2, "available_memory_mb", "30")
+  environment_variables        = lookup(each.value.cloud-function-gen2, "environment_variables", null)
+  secret_environment_variables = lookup(each.value.cloud-function-gen2, "secrets", [])
+}
+
+module "cronjob" {
+  source   = "../modules/cronjob-gen1"
+  for_each = { for config in local.terraform_configs : config.name => config if contains(keys(config), "cron") && contains(keys(config), "cloud-function")}
+
+  name                 = each.value.name
+  description          = each.value.description
+  schedule             = lookup(each.value.cron, "schedule", "")
+  time_zone            = lookup(each.value.cron, "time_zone", "")
+  attempt_deadline     = lookup(each.value.cron, "attempt_deadline", "")
+  http_method          = lookup(each.value.cron, "http_method", "")
+  target_project       = local.project
+  target_region        = local.region
+  target_function_name = module.cloud_function[each.value.name].function_name
+  https_trigger_url    = module.cloud_function[each.value.name].function_trigger_url
+
+  depends_on = [
+    module.cloud_function
+  ]
+}
+
+module "cronjob-gen2" {
+  source   = "../modules/cronjob-gen2"
+  for_each = { for config in local.terraform_configs : config.name => config if contains(keys(config), "cron") && contains(keys(config), "cloud-function-gen2")}
+
+  name                 = each.value.name
+  description          = each.value.description
+  schedule             = lookup(each.value.cron, "schedule", "")
+  time_zone            = lookup(each.value.cron, "time_zone", "")
+  attempt_deadline     = lookup(each.value.cron, "attempt_deadline", "")
+  http_method          = lookup(each.value.cron, "http_method", "")
+  target_project       = local.project
+  target_region        = local.region
+  target_function_name = module.cloud_function_gen2[each.value.name].function_name
+  https_trigger_url    = module.cloud_function_gen2[each.value.name].function_trigger_url
+
+  depends_on = [
+    module.cloud_function_gen2
+  ]
 }

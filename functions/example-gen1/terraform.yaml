@@ -1,6 +1,6 @@
 name: test
 description: test function
-config: 
+cloud-function: 
   runtime: python39
   source_dir: "."
   execution_timeout: 30

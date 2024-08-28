@@ -1,6 +1,6 @@
-name: gh_app_example
+name: gh-app-example
 description: example for using github app in cloud function
-config: 
+cloud-function:  
   secrets:
     - key: GH_APP_ID
       secret: dependency.infra.outputs.secret_ids["GH_APP_ID"]
