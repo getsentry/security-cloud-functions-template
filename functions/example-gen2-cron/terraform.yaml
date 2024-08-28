@@ -3,9 +3,9 @@ description: gen2 cloud function example
 cloud-function-gen2: 
   timeout: 120
   available_memory_mb: 128Mi
-  # environment_variables: 
-  #   env_1: 123
-  #   env_2: 345
+  environment_variables: 
+    ENV_1: 123
+    ENV_2: 345
   secrets:
     - key: test_key_1
       secret: test_key_1

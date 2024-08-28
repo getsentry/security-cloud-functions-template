@@ -5,9 +5,9 @@ cloud-function:
   entry_point: main
   trigger_http: true
   available_memory_mb: 128
-  # environment_variables: 
-  #   env_1: 123
-  #   env_2: 345
+  environment_variables: 
+    env_1: 123
+    env_2: 345
   secrets:
     - key: test_key_1
       secret: test_key_1
