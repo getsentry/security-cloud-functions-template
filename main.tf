@@ -1,23 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 6.0.1"
-    }
-
-    google-beta = {
-      source = "hashicorp/google-beta"
-    }
-  }
-}
-
-provider "google" {
-  project = local.project
-  region  = local.region
-  zone    = local.zone
-}
-
-
 locals {
   project           = "jeffreyhung-test"
   region            = "us-west1"
@@ -29,10 +9,24 @@ locals {
   sentry_jira_url   = "https://getsentry.atlassian.net"
 }
 
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 6.0.1"
+    }
+  }
+}
+
+provider "google" {
+  project = local.project
+  region  = local.region
+  zone    = local.zone
+}
+
 resource "google_storage_bucket" "staging_bucket" {
   name          = "${local.project}-cloud-function-staging"
   location      = "US"
   force_destroy = true
-
   public_access_prevention = "enforced"
 }
