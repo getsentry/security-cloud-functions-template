@@ -21,9 +21,8 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: |
-            projects/${{ var.project_number }}/locations/global/workloadIdentityPools/${{ var.environ }}-github/providers/github-oidc-pool
-          service_account: ${{ var.terraformer }}
+          workload_identity_provider: projects/546928617664/locations/global/workloadIdentityPools/gha-terraform-checker-pool/providers/gha-terraform-checker-provider
+          service_account: gha-cloud-functions-deployment@jeffreyhung-test.iam.gserviceaccount.com
 
       - name: terraform plan
         id: terraform-plan
