@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.1
 
-      - name: gcp auth (tf plan)
+      - name: gcp auth (tf apply)
         id: auth
         uses: google-github-actions/auth@v2
         with:
