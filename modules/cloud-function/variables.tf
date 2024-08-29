@@ -1,19 +1,12 @@
-variable "name" {
-  type        = string
-  description = "Name of the cloud function"
-  default     = "default-name"
-}
-
 variable "project" {
   type = string
 }
 
 variable "secret_ids" {}
 
-variable "source_dir" {
+variable "name" {
   type        = string
-  description = "Directory containing source code, relative or absolute (relative preferred, think about CI/CD!)"
-  default     = "."
+  description = "Name of the cloud function"
 }
 
 variable "description" {
@@ -22,10 +15,16 @@ variable "description" {
   default     = null
 }
 
+variable "source_dir" {
+  type        = string
+  description = "Directory containing source code, relative or absolute (relative preferred, think about CI/CD!)"
+}
+
 variable "runtime" {
   type        = string
-  description = "Function runtime, default python 3.9"
-  default     = "python39"
+  description = "Function runtime, default python 3.11"
+  default     = "python311"
+  nullable=false
 }
 
 variable "source_object_prefix" {
@@ -50,18 +49,21 @@ variable "trigger_http" {
   type        = bool
   description = "Whether or not the trigger for this cloud function should be an HTTP endpoint"
   default     = true
+  nullable=false
 }
 
 variable "execution_timeout" {
   type        = number
   description = "Amount of time function can execute before timing out, in seconds"
   default     = 60
+  nullable=false
 }
 
 variable "available_memory_mb" {
   type        = number
   description = "Amount of memory assigned to each execution"
   default     = 128
+  nullable=false
 }
 
 variable "temp_zip_output_dir" {
@@ -73,8 +75,6 @@ variable "temp_zip_output_dir" {
 variable "deploy_sa_email" {
   type        = string
   description = "Service account used for CD in GitHub actions"
-  # TODO: Remove hardcoded account once deployment SA moved to terraform
-  default = "gha-cloud-functions-deployment@jeffreyhung-test.iam.gserviceaccount.com"
 }
 
 variable "environment_variables" {

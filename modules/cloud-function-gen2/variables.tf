@@ -1,6 +1,19 @@
+
+variable "project" {
+  type = string
+}
+
+variable "secret_ids" {}
+
 variable "name" {
   type        = string
   description = "Name of the cloud function"
+}
+
+variable "description" {
+  type        = string
+  description = "Description for the cloud function"
+  default     = null
 }
 
 variable "source_dir" {
@@ -14,23 +27,12 @@ variable "location" {
   default     = "us-west1"
 }
 
-variable "description" {
-  type        = string
-  description = "Description for the cloud function"
-  default     = null
-}
-
 variable "runtime" {
   type        = string
-  description = "Function runtime, default python 3.9"
-  default     = "python39"
+  description = "Function runtime, default python 3.11"
+  default     = "python311"
+  nullable=false
 }
-
-variable "project" {
-  type = string
-}
-
-variable "secret_ids" {}
 
 variable "source_object_prefix" {
   type        = string
@@ -54,18 +56,21 @@ variable "trigger_http" {
   type        = bool
   description = "Whether or not the trigger for this cloud function should be an HTTP endpoint"
   default     = true
+  nullable=false
 }
 
 variable "execution_timeout" {
   type        = number
   description = "Amount of time function can execute before timing out, in seconds"
   default     = 60
+  nullable=false
 }
 
 variable "available_memory_mb" {
   type        = string
   description = "Amount of memory assigned to each execution"
   default     = "128M"
+  nullable=false
 }
 
 variable "temp_zip_output_dir" {
@@ -77,8 +82,6 @@ variable "temp_zip_output_dir" {
 variable "deploy_sa_email" {
   type        = string
   description = "Service account used for CD in GitHub actions"
-  # TODO: Remove hardcoded account once deployment SA moved to terraform
-  default = "gha-cloud-functions-deployment@jeffreyhung-test.iam.gserviceaccount.com"
 }
 
 variable "environment_variables" {
@@ -109,16 +112,6 @@ variable "files_to_exclude" {
   description = "files to exclude from the "
   type        = list(string)
   default = [
-    "terragrunt.hcl",
-    ".terraform.lock.hcl",
-    "locals.tf",
-    "variables.tf",
-    "main.tf",
-    "terraform.tfstate",
-    "terraform.tfstate.backup",
-    ".terraform.tfstate.lock.info",
-    ".terragrunt-module-manifest",
-    ".terragrunt-source-manifest",
-    ".terragrunt-source-version",
+    "terraform.yaml",
   ]
 }
