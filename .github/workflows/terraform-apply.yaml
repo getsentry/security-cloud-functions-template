@@ -29,3 +29,5 @@ jobs:
         uses: dflook/terraform-apply@7a56cfb68f437341062f41afca87c71fc5b4bd5f # v1.36.2
         if:
           ${{ steps.auth.outcome == 'success'}}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
