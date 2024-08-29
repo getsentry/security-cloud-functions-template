@@ -31,7 +31,7 @@ variable "runtime" {
   type        = string
   description = "Function runtime, default python 3.11"
   default     = "python311"
-  nullable=false
+  nullable    = false
 }
 
 variable "source_object_prefix" {
@@ -56,21 +56,21 @@ variable "trigger_http" {
   type        = bool
   description = "Whether or not the trigger for this cloud function should be an HTTP endpoint"
   default     = true
-  nullable=false
+  nullable    = false
 }
 
 variable "execution_timeout" {
   type        = number
   description = "Amount of time function can execute before timing out, in seconds"
   default     = 60
-  nullable=false
+  nullable    = false
 }
 
 variable "available_memory_mb" {
   type        = string
   description = "Amount of memory assigned to each execution"
   default     = "128M"
-  nullable=false
+  nullable    = false
 }
 
 variable "temp_zip_output_dir" {

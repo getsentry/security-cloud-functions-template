@@ -82,8 +82,8 @@ module "cronjob-gen2" {
   target_function_name = module.cloud_function_gen2[each.value.name].function_name
   https_trigger_url    = module.cloud_function_gen2[each.value.name].function_trigger_url
   # passing the static values
-  target_project = var.project
-  target_region  = var.region
+  target_project  = var.project
+  target_region   = var.region
   deploy_sa_email = var.deploy_sa_email
 
   depends_on = [
