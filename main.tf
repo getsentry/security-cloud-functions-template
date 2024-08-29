@@ -28,9 +28,9 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "staging_bucket" {
-  name          = "${local.project}-cloud-function-staging"
-  location      = "US"
-  force_destroy = true
+  name                     = "${local.project}-cloud-function-staging"
+  location                 = "US"
+  force_destroy            = true
   public_access_prevention = "enforced"
 }
 
@@ -40,8 +40,8 @@ resource "google_storage_bucket_iam_binding" "staging-bucket-iam" {
 
   members = ["serviceAccount:${module.infrastructure.deploy_sa_email}"]
 
-  depends_on = [ 
-    module.infrastructure, 
+  depends_on = [
+    module.infrastructure,
     google_storage_bucket.staging_bucket
   ]
 }
@@ -53,10 +53,10 @@ resource "google_storage_bucket_iam_member" "staging_bucket_get" {
 }
 
 resource "google_storage_bucket" "tf-state" {
-  name          = "${local.project}-tfstate"
-  force_destroy = false
-  location      = "US"
-  storage_class = "STANDARD"
+  name                     = "${local.project}-tfstate"
+  force_destroy            = false
+  location                 = "US"
+  storage_class            = "STANDARD"
   public_access_prevention = "enforced"
   versioning {
     enabled = true
@@ -69,8 +69,8 @@ resource "google_storage_bucket_iam_binding" "tfstate-bucket-iam" {
 
   members = ["serviceAccount:${module.infrastructure.deploy_sa_email}"]
 
-  depends_on = [ 
-    module.infrastructure, 
+  depends_on = [
+    module.infrastructure,
     google_storage_bucket.tf-state
   ]
 }
