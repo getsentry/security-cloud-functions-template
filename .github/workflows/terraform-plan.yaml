@@ -31,3 +31,5 @@ jobs:
           ${{ steps.auth.outcome == 'success'}}
         with:
           add_github_comment: changes-only
+        env:
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
