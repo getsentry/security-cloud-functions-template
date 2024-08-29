@@ -1,0 +1,32 @@
+name: Terraform Apply
+
+on:
+  push:
+    branches:
+        - main
+
+jobs:
+  build:
+    name: tf apply
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: gcp auth (tf plan)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: |
+            projects/${{ var.project_number }}/locations/global/workloadIdentityPools/${{ var.environ }}-github/providers/github-oidc-pool
+          service_account: ${{ var.terraformer }}
+
+      - name: terraform apply
+        id: terraform-apply
+        uses: dflook/terraform-apply@7a56cfb68f437341062f41afca87c71fc5b4bd5f # v1.36.2
+        if:
+          ${{ steps.auth.outcome == 'success'}}
