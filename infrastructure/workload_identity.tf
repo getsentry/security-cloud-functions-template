@@ -8,7 +8,7 @@ variable "region" {}
 
 resource "google_service_account" "gha_cloud_functions_deployment" {
   account_id   = "gha-cloud-functions-deployment"
-  description  = "For use by Terraform and GitHub Actions to deploy DNR pipeline resources via security-cloud-functions repo"
+  description  = "For use by Terraform and GitHub Actions to deploy cloud-functions"
   display_name = "gha-cloud-functions-deployment"
   project      = var.project
 }
