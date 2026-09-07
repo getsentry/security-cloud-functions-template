@@ -65,7 +65,7 @@ jobs:
 
       - name: terraform plan
         id: terraform-plan
-        uses: dflook/terraform-plan@3f1559b085c5ceff68c3724c9b66c015a6c940cd # v3.0.0
+        uses: dflook/terraform-plan@6c82d55cb6c21f54498dc4479d7491736b037ba4 # v3.0.1
         if: ${{ steps.auth.outcome == 'success' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
