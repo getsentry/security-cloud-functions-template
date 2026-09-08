@@ -10,6 +10,7 @@ writing Terraform.
 - [How CI works](#cicd) — plan on PRs, apply on merge
 - [Security design](#security-design) — why there are two service accounts
 - [Troubleshooting](#troubleshooting) — the errors you will actually hit
+- [AGENTS.md](AGENTS.md) — instructions for AI coding agents (Claude Code, Codex, Cursor, Copilot) working in this repo
 
 ---
 
