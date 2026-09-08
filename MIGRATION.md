@@ -147,6 +147,20 @@ Cloud Run services the only change is one new empty repository and the
 The new `cloudrun_image_tag` variable defaults to `latest` and CI overrides it,
 so there is nothing to set in `terraform.tfvars`.
 
+## 8b. Round-two changes
+
+- **`cloudrun_image_tag` is now required** (it defaulted to `latest`, which CI
+  never pushes). `sbin/tf-plan` and `sbin/bootstrap` set it for you; other local
+  Terraform invocations need `-var cloudrun_image_tag=<sha>`. CI is unchanged.
+- **Pub/Sub pull subscriptions are optional.** The addresses gain a `[0]` index;
+  `modules/pubsub/moved.tf` migrates existing state, so the plan shows moves, not
+  replacements. `service_account_display_name` is now optional.
+- **Artifact Registry now deletes tagged images** older than 90 days beyond the 20
+  most recent. Previously it kept every SHA-tagged image forever. Nothing to do,
+  but expect the first cleanup run to remove old images.
+- **Resources in `infrastructure/` now depend on the enabled APIs.** No state
+  change; the plan may reorder creation on a fresh project.
+
 ## 9. Update the workflow files
 
 The GitHub Actions workflows gained a `checks` job, `concurrency` groups and the

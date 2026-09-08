@@ -5,22 +5,25 @@ variable "topic_name" {
 
 variable "subscription_id" {
   type        = string
-  description = "Pub/Sub subscription name"
+  description = "Name of a pull subscription to create. Null means no pull subscription (and no consumer service account) -- use this for topics that only push to functions or services."
+  default     = null
+}
+
+variable "service_account_id" {
+  type        = string
+  description = "Service account id for the pull consumer. Required when subscription_id is set; the loader enforces this."
+  default     = null
+}
+
+variable "service_account_display_name" {
+  type        = string
+  description = "Display name for the consumer service account. Defaults to one derived from subscription_id."
+  default     = null
 }
 
 variable "gcp_region" {
   type        = string
   description = "Region messages are allowed to be persisted in"
-}
-
-variable "service_account_id" {
-  type        = string
-  description = "Service account id for the subscriber"
-}
-
-variable "service_account_display_name" {
-  type        = string
-  description = "Service account display name"
 }
 
 variable "ttl" {

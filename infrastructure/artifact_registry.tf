@@ -15,6 +15,18 @@ resource "google_artifact_registry_repository" "cloud_run" {
     terraformed = "true"
   }
 
+  # KEEP policies only exempt images from DELETE policies; on their own they
+  # delete nothing. Without the tagged-DELETE below, every SHA-tagged image CI
+  # ever pushed would be retained forever.
+  cleanup_policies {
+    id     = "delete-old-tagged"
+    action = "DELETE"
+    condition {
+      tag_state  = "TAGGED"
+      older_than = "${var.image_retention_days * 86400}s"
+    }
+  }
+
   cleanup_policies {
     id     = "keep-recent-versions"
     action = "KEEP"
@@ -31,4 +43,6 @@ resource "google_artifact_registry_repository" "cloud_run" {
       older_than = "604800s" # 7 days
     }
   }
+
+  depends_on = [google_project_service.services]
 }

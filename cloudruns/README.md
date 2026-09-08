@@ -35,6 +35,11 @@ Terraform would see no diff and silently keep serving the old code. Cloud Run
 revisions are cheap and traffic shifts atomically, and every running revision is
 traceable to a commit.
 
+There is no supported way to `terraform apply` a Cloud Run service from your
+laptop: the image only exists once CI has built it. `cloudrun_image_tag` has no
+default for that reason. `sbin/tf-plan` passes the current commit so local plans
+work; if you must run Terraform by hand, add `-var cloudrun_image_tag=<sha>`.
+
 To opt a service out and manage its image yourself, set `image:` explicitly:
 
 ```yaml

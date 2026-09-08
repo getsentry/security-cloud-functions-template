@@ -31,6 +31,11 @@ fi
 outlog=tf-plan.log
 errlog=tf-plan.error.log
 
+# Required by the root module; CI sets it to the commit it just built images
+# for. Locally the current commit is the closest equivalent. Override with an
+# explicit -var if you need to plan against a specific tag.
+export TF_VAR_cloudrun_image_tag="${TF_VAR_cloudrun_image_tag:-$(git rev-parse HEAD)}"
+
 # Strip ANSI colour codes.
 uncolor() { sed -E $'s/\x1b\\[[0-9;]*[A-Za-z]//g'; }
 

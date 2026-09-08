@@ -20,6 +20,12 @@ variable "functions" {
   default     = []
 }
 
+variable "cloudruns" {
+  type        = set(string)
+  description = "Cloud Run services this workflow calls. Each one gets a run.invoker grant for the workflow's service account."
+  default     = []
+}
+
 variable "bucket" {
   type        = set(string)
   description = "GCS buckets this workflow reads from. Each one listed here gets an objectViewer grant for the workflow's service account."

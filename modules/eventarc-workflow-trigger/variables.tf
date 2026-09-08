@@ -18,6 +18,12 @@ variable "workflow_id" {
   description = "ID for the workflow to trigger"
 }
 
+variable "pubsub_topic" {
+  type        = string
+  description = "Name of an existing Pub/Sub topic to consume. Null lets Eventarc create its own, whose name is exposed in the pubsub_topic output."
+  default     = null
+}
+
 variable "criteria" {
   description = "Event attributes the trigger matches on. At minimum a `type`, e.g. google.cloud.pubsub.topic.v1.messagePublished."
   type = list(object({

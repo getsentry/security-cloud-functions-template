@@ -45,6 +45,16 @@ resource "google_cloud_run_service_iam_member" "function_run_invoker" {
   member   = "serviceAccount:${google_service_account.workflow_sa.email}"
 }
 
+resource "google_cloud_run_v2_service_iam_member" "cloudrun_invoker" {
+  for_each = var.cloudruns
+
+  project  = var.project
+  location = var.region
+  name     = each.value
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.workflow_sa.email}"
+}
+
 resource "google_storage_bucket_iam_member" "workflow_bucket_read" {
   for_each = var.bucket
   bucket   = each.value

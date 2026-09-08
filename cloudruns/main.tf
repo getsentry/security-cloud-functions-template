@@ -17,8 +17,8 @@ locals {
     dirname(f) => yamldecode(file("${path.module}/${f}"))
   }
 
-  run_cfg  = { for d, c in local.configs : d => try(c["cloud-run"], null) == null ? {} : c["cloud-run"] }
-  cron_cfg = { for d, c in local.configs : d => try(c["cron"], null) == null ? {} : c["cron"] }
+  run_cfg  = { for d, c in local.configs : d => try(merge(c["cloud-run"]), {}) }
+  cron_cfg = { for d, c in local.configs : d => try(merge(c["cron"]), {}) }
 
   allowed_top_keys  = ["name", "description", "cloud-run", "cron"]
   allowed_run_keys  = ["image", "port", "cpu", "memory", "cpu_idle", "concurrency", "min_instances", "max_instances", "request_timeout", "execution_environment", "ingress", "allow_unauthenticated", "deletion_protection", "environment_variables", "secrets"]

@@ -33,8 +33,8 @@ then handles the setup that used to be a manual checklist: creating the state bu
 workflows with your real workload-identity provider and service account emails.
 
 It is safe to re-run — every step checks the current state before changing
-anything. On a brand-new project the first `apply` often fails partway through
-while the ~37 required APIs finish enabling; wait 15 minutes and run it again.
+anything. It enables the ~37 required APIs first and waits for them, so the
+first `apply` no longer races them.
 
 ### 2. Create the `production` GitHub Environment
 
@@ -88,7 +88,8 @@ resource name**, and the `name:` field inside must match it.
 | Cloud Function, optionally on a schedule | [functions/README.md](functions/README.md) | `examples/function-cron` |
 | Cloud Run service from a Dockerfile | [cloudruns/README.md](cloudruns/README.md) | `examples/cloudrun-basic` |
 | Cloud Workflow, optionally event-triggered | [workflows/README.md](workflows/README.md) | `examples/workflow-basic` |
-| Pub/Sub topic, optionally archived to GCS | [pubsubs/README.md](pubsubs/README.md) | `examples/pubsub-basic` |
+| Pub/Sub topic that pushes to a function or service | [pubsubs/README.md](pubsubs/README.md) | `examples/pubsub-to-function` |
+| Pub/Sub topic with a pull subscription or GCS archive | [pubsubs/README.md](pubsubs/README.md) | `examples/pubsub-basic` |
 | secret | [secrets/readme.md](secrets/readme.md) | — |
 | shared Python library | [libraries/README.md](libraries/README.md) | `libraries/example` — not built or published by CI yet |
 
@@ -97,7 +98,20 @@ misspelled keys in a `terraform.yaml` are a **plan-time error** naming the file
 and the key, so a typo can't silently deploy the wrong thing. A `name:` that
 doesn't match its directory, a missing required block, a `cron` without a
 `schedule`, or a Cloud Run folder with neither a `Dockerfile` nor an `image:`
-fail the same way.
+fail the same way. So does any cross-reference — a workflow calling a function,
+a topic pushing to a service, a trigger naming a topic — whose target isn't
+defined in this repo.
+
+### Wiring things together
+
+The directories reference each other by name, and every reference is checked at
+plan time:
+
+| From | Key | To |
+|---|---|---|
+| `pubsubs/` | `pubsub.push_to: [{function: x}, {cloudrun: y}]` | delivers each message to `functions/x` or `cloudruns/y` |
+| `workflows/` | `functions: [x]`, `cloudruns: [y]` | grants the workflow invoker on them |
+| `workflows/` | `workflow-trigger.pubsub_topic: t` | runs the workflow when a message lands on a topic from `pubsubs/` |
 
 ### Referencing config values from YAML
 
@@ -291,8 +305,18 @@ For local runs against a security-as-code terraformer account,
 ## Troubleshooting
 
 **`Error: ... API has not been used in project ... before or it is disabled`**
-On a new project, enabling the ~37 required APIs takes several minutes to
-propagate. Wait 15 minutes and re-run `terraform apply`.
+Rare now: `sbin/bootstrap` pre-enables every API and Terraform orders resources
+after them. If it still happens, wait a few minutes and re-run `terraform apply`.
+
+**`No value for required variable "cloudrun_image_tag"`**
+Cloud Run images are built only by CI, so there's no default tag to deploy. Use
+`sbin/tf-plan` (it passes the current commit), or add
+`-var cloudrun_image_tag=<sha>`.
+
+**Pub/Sub push returns 401 and nothing runs**
+On projects created before 2021-04-08 the Pub/Sub service agent needs a one-off
+grant to impersonate the push identity — see
+[examples/pubsub-to-function](examples/pubsub-to-function/README.md#older-projects).
 
 **`Found unreplaced CHANGEME placeholders`**
 Run `sbin/bootstrap`, or fill in `terraform.tfvars`, the backend `bucket` in
