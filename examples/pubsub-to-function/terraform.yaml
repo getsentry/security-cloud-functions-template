@@ -1,0 +1,17 @@
+# The `name` must match this directory's name.
+name: pubsub-to-function
+description: a topic whose messages are pushed to a Cloud Function
+
+pubsub:
+  topic_name: orders
+  # No subscription_id: this topic only pushes, so there is no pull subscription
+  # and no consumer service account to create.
+
+  # Each entry delivers every message on the topic to a function or Cloud Run
+  # service over HTTPS, authenticated with an OIDC token. The target must exist
+  # in functions/ or cloudruns/ -- a name that doesn't fails at plan time.
+  push_to:
+    - function: function-cron
+    # - cloudrun: cloudrun-basic
+    #   path: /pubsub          # optional, defaults to the service root
+    #   ack_deadline_seconds: 120   # optional, default 60; raise for slow handlers

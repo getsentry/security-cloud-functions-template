@@ -34,10 +34,23 @@ done
 ok "gcloud, terraform, python3 present"
 
 if ! gcloud auth list --filter=status:ACTIVE --format='value(account)' 2>/dev/null | grep -q .; then
-  die "No active gcloud login. Run: gcloud auth login && gcloud auth application-default login"
+  die "No active gcloud login. Run: gcloud auth login"
 fi
 ACTIVE_ACCOUNT="$(gcloud auth list --filter=status:ACTIVE --format='value(account)' | head -1)"
-ok "authenticated as $ACTIVE_ACCOUNT"
+ok "gcloud authenticated as $ACTIVE_ACCOUNT"
+
+# Terraform does not use the gcloud login above; it uses Application Default
+# Credentials, which are set up by a separate command and are what actually
+# fails with "could not find default credentials" if missing.
+if ! gcloud auth application-default print-access-token >/dev/null 2>&1; then
+  die "No Application Default Credentials. Run: gcloud auth application-default login"
+fi
+ok "application default credentials present"
+
+# Required by the root module. Only matters once a cloudruns/ service exists,
+# but Terraform insists on a value regardless; the current commit is the same
+# tag CI would use.
+export TF_VAR_cloudrun_image_tag="$(git -C "$TOP" rev-parse HEAD 2>/dev/null || echo bootstrap)"
 
 ask() { # ask <prompt> <default> <varname>
   local prompt="$1" default="${2:-}" __var="$3" reply
@@ -111,6 +124,17 @@ else
   gcloud storage buckets update "gs://$STATE_BUCKET" --versioning
   ok "created gs://$STATE_BUCKET (versioned, private)"
 fi
+
+# On a brand-new project the first apply used to fail partway through while
+# the APIs it had just enabled finished propagating. Enable them up front --
+# `gcloud services enable` waits for the operation -- so the wait happens here,
+# once, with a message, instead of as a red apply. The list is read from
+# services.tf so it cannot drift from what Terraform manages.
+step "Enabling required APIs (this can take a couple of minutes)"
+SERVICES="$(grep -oE '"[a-z0-9-]+\.googleapis\.com"' "$TOP/infrastructure/services.tf" | tr -d '"' | tr '\n' ' ')"
+# shellcheck disable=SC2086  # intentional word splitting
+gcloud services enable $SERVICES --project="$PROJECT"
+ok "$(wc -w <<<"$SERVICES" | tr -d ' ') APIs enabled"
 
 step "Writing terraform.tfvars"
 python3 - "$TOP/terraform.tfvars" <<PY

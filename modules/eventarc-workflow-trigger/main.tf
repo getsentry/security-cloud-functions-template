@@ -42,6 +42,17 @@ resource "google_eventarc_trigger" "earc-trigger" {
     workflow = var.workflow_id
   }
 
+  # Without this Eventarc creates an anonymous topic that nothing else knows the
+  # name of. With it, the trigger consumes a topic defined in pubsubs/.
+  dynamic "transport" {
+    for_each = var.pubsub_topic != null ? [1] : []
+    content {
+      pubsub {
+        topic = "projects/${var.workflow_project_id}/topics/${var.pubsub_topic}"
+      }
+    }
+  }
+
   depends_on = [
     google_project_iam_member.earc_sa_receiveevent_iam
   ]

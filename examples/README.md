@@ -30,8 +30,9 @@ sed -i '' 's/^name: .*/name: daily-report/' functions/daily-report/terraform.yam
 | `function-gh-app-token` | `functions/` | Minting a short-lived GitHub App token from secrets |
 | `cloudrun-basic` | `cloudruns/` | A Flask service built from a Dockerfile, with a scheduled endpoint |
 | `workflow-basic` | `workflows/` | A workflow calling a function, with no hardcoded URLs |
-| `workflow-eventarc` | `workflows/` | The same, triggered by a Pub/Sub message via Eventarc |
+| `workflow-eventarc` | `workflows/` | The same, run by Eventarc whenever a message lands on `pubsub-basic`'s topic |
 | `pubsub-basic` | `pubsubs/` | A topic and a pull subscription with its own service account |
+| `pubsub-to-function` | `pubsubs/` | A topic that pushes every message to a function |
 | `pubsub-with-sink` | `pubsubs/` | The same, plus a GCS archive of every message |
 
 ## Before you apply
