@@ -54,12 +54,18 @@ locals {
   ])
 
   # Grouped by target: one push identity per function/service, however many
-  # topics feed it. See modules/pubsub-push for why. Only well-formed entries
-  # that name a real target get here; the rest are reported by the
-  # preconditions and must not also produce a module evaluation error.
+  # topics feed it. See modules/pubsub-push for why.
+  #
+  # Only well-formed, non-duplicated entries naming a real target get here. The
+  # rest are reported by the preconditions and must NOT also reach the module:
+  # a duplicated (topic, target) pair would hit the module's for_each as a raw
+  # "Duplicate object key" error, and Terraform walks the graph concurrently, so
+  # that could be reported instead of the readable precondition message.
   valid_push_entries = [
     for e in local.push_entries : e
-    if e.has_one_target && (e.type == "function" ? contains(var.function_names, e.name) : contains(var.cloudrun_names, e.name))
+    if e.has_one_target
+    && (e.type == "function" ? contains(var.function_names, e.name) : contains(var.cloudrun_names, e.name))
+    && !contains(local.duplicate_push_pairs, "${e.topic}|${e.type}/${e.name}")
   ]
 
   push_targets = {

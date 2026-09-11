@@ -49,9 +49,10 @@ resource "google_cloud_run_v2_service_iam_member" "cloudrun_invoker" {
 #     --member=serviceAccount:service-<project-number>@gcp-sa-pubsub.iam.gserviceaccount.com \
 #     --role=roles/iam.serviceAccountTokenCreator
 resource "google_pubsub_subscription" "push" {
-  # Keyed by topic. The loader rejects a repeated (topic, target) pair at plan
-  # time, so this can never silently merge two entries; the precondition below
-  # is the backstop if the module is ever called directly.
+  # Keyed by topic, so a repeated topic here would be a raw "Duplicate object
+  # key" error. The loader filters such pairs out before calling this module and
+  # reports them readably; the precondition below is the backstop if the module
+  # is ever called directly with duplicates.
   for_each = { for s in var.subscriptions : s.topic => s }
 
   name                       = "${each.value.topic}-to-${var.target_name}"
