@@ -88,6 +88,27 @@ module "pubsubs" {
   depends_on = [terraform_data.config_validation]
 }
 
+module "pubsub_push" {
+  source   = "../modules/pubsub-push"
+  for_each = local.push_targets
+
+  target_type   = each.value.type
+  target_name   = each.value.name
+  target_url    = each.value.type == "function" ? var.function_urls[each.value.name] : var.cloudrun_urls[each.value.name]
+  subscriptions = each.value.subscriptions
+
+  project  = var.project
+  location = var.region
+  owner    = var.owner
+
+  # Subscriptions reference topics by name, so the topic must exist first. The
+  # validation edge is listed explicitly rather than inherited through
+  # module.pubsubs: it is what stops `terraform apply -target=module.pubsub_push`
+  # from skipping the YAML checks, and must not depend on another module's
+  # depends_on staying put.
+  depends_on = [module.pubsubs, terraform_data.config_validation]
+}
+
 module "pubsubs_sink" {
   source   = "../modules/pubsub-sink"
   for_each = local.sinks
