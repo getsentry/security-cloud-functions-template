@@ -28,11 +28,11 @@ resource "google_pubsub_subscription" "subscription" {
     terraformed = "true"
   }
 
-  dynamic "expiration_policy" {
-    for_each = var.ttl != null ? [1] : []
-    content {
-      ttl = var.ttl
-    }
+  # Always set: omitting the block does NOT mean "never" -- it means GCP's
+  # default of deleting the subscription after 31 idle days. Empty string is how
+  # the API spells "never expire".
+  expiration_policy {
+    ttl = var.ttl != null ? var.ttl : ""
   }
 
   retry_policy {

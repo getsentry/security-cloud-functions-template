@@ -28,7 +28,7 @@ variable "gcp_region" {
 
 variable "ttl" {
   type        = string
-  description = "Subscription expiration policy: how long the subscription may sit idle before Pub/Sub deletes it. A duration string in seconds, e.g. \"604800s\" for 7 days. Null means never expire."
+  description = "Subscription expiration policy: how long the subscription may sit idle before Pub/Sub deletes it. A duration string in seconds, e.g. \"604800s\" for 7 days. Null means never expire (the module sets an explicit never-expire policy; GCP's default would be 31 days)."
   default     = null
 
   validation {

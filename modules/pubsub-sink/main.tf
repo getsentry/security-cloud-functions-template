@@ -51,6 +51,12 @@ resource "google_pubsub_subscription" "sink" {
     terraformed = "true"
   }
 
+  # Never expire. GCP's default deletes a subscription idle for 31 days, which
+  # would silently stop archiving a quiet topic.
+  expiration_policy {
+    ttl = ""
+  }
+
   cloud_storage_config {
     bucket          = google_storage_bucket.pubsub-sink-bucket.name
     filename_prefix = var.filename_prefix

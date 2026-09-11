@@ -49,6 +49,9 @@ resource "google_cloud_run_v2_service_iam_member" "cloudrun_invoker" {
 #     --member=serviceAccount:service-<project-number>@gcp-sa-pubsub.iam.gserviceaccount.com \
 #     --role=roles/iam.serviceAccountTokenCreator
 resource "google_pubsub_subscription" "push" {
+  # Keyed by topic. The loader rejects a repeated (topic, target) pair at plan
+  # time, so this can never silently merge two entries; the precondition below
+  # is the backstop if the module is ever called directly.
   for_each = { for s in var.subscriptions : s.topic => s }
 
   name                       = "${each.value.topic}-to-${var.target_name}"
@@ -73,9 +76,23 @@ resource "google_pubsub_subscription" "push" {
     }
   }
 
+  # Without this GCP applies its default of deleting the subscription after 31
+  # days of no messages. A quiet topic would silently lose its delivery until the
+  # next apply recreated it. Empty string means never expire.
+  expiration_policy {
+    ttl = ""
+  }
+
   retry_policy {
     minimum_backoff = "10s"
     maximum_backoff = "600s"
+  }
+
+  lifecycle {
+    precondition {
+      condition     = length(var.subscriptions) == length(distinct([for s in var.subscriptions : s.topic]))
+      error_message = "pubsub-push for ${var.target_name}: the same topic appears more than once in subscriptions; each topic may push to a target only once."
+    }
   }
 
   depends_on = [

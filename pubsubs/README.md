@@ -73,8 +73,11 @@ itself. Either, both, or neither (a bare topic) is valid.
 | `path` | Path on the target to POST to, e.g. `/pubsub` | no | root |
 | `ack_deadline_seconds` | How long the handler may take before Pub/Sub redelivers | no | `60` |
 
-The target must exist in this repo. A name that doesn't fails at `terraform plan`
-with the list of names that do. Each target gets a dedicated push identity,
+The target must exist in this repo, and may appear only once per topic — two
+entries for the same target from the same topic would deliver every message
+twice, so it's a plan-time error; route on the message inside your handler
+instead. A name that doesn't exist fails at `terraform plan` with the list of
+names that do. Each target gets a dedicated push identity,
 `ps-<target>`, holding invoker on that one function or service and nothing else;
 topics that push to the same target share it. The handler receives a JSON body
 with a base64 `message.data` — see
@@ -90,8 +93,10 @@ with a base64 `message.data` — see
 > fails at plan with an explanation.
 
 The topic is created with 7-day message retention and a storage policy pinning
-messages to your `region`. The subscription gets a 600s ack deadline and a 10s
-minimum retry backoff.
+messages to your `region`. The pull subscription gets a 600s ack deadline and a
+10s minimum retry backoff. Every subscription this template creates — pull, push
+and sink — is set to **never expire**; GCP's default would delete it after 31
+idle days, which for a quiet topic means deliveries silently stop.
 
 ### `sink` (optional)
 

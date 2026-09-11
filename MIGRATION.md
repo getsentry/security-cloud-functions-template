@@ -158,6 +158,10 @@ so there is nothing to set in `terraform.tfvars`.
 - **Artifact Registry now deletes tagged images** older than 90 days beyond the 20
   most recent. Previously it kept every SHA-tagged image forever. Nothing to do,
   but expect the first cleanup run to remove old images.
+- **Pull subscriptions no longer expire.** Omitting `ttl` used to leave GCP's
+  31-day idle expiry in place despite the docs saying "never". The plan will show
+  an `expiration_policy` update on each existing pull subscription; no data or
+  downtime is involved.
 - **Resources in `infrastructure/` now depend on the enabled APIs.** No state
   change; the plan may reorder creation on a fresh project.
 

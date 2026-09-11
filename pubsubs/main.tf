@@ -79,8 +79,19 @@ locals {
       [for e in local.push_entries : "push_to references function '${e.name}', which is not in functions/ (known: ${join(", ", sort(var.function_names))})" if e.config == d && e.has_one_target && e.type == "function" && !contains(var.function_names, e.name)],
       [for e in local.push_entries : "push_to references cloudrun '${e.name}', which is not in cloudruns/ (known: ${join(", ", sort(var.cloudrun_names))})" if e.config == d && e.has_one_target && e.type == "cloudrun" && !contains(var.cloudrun_names, e.name)],
       [for e in local.push_entries : "push_to path '${e.path}' must start with /" if e.config == d && e.path != "" && !startswith(e.path, "/")],
+      # A repeated (topic, target) pair would collapse into one subscription
+      # (they are keyed by topic inside the module) and the extra path would
+      # vanish with no error. It also means double-delivering every message to
+      # the same service, which is almost never intended.
+      [for key in local.duplicate_push_pairs : "push_to lists ${split("|", key)[1]} more than once for topic '${split("|", key)[0]}'. List each target once per topic and route on the message inside your handler" if startswith(key, "${local.pubsub_cfg[d]["topic_name"]}|")],
     )
   }
+
+  # (topic|type/name) pairs that appear more than once across all configs.
+  duplicate_push_pairs = distinct([
+    for e in local.push_entries : "${e.topic}|${e.type}/${e.name}"
+    if e.has_one_target && length([for f in local.push_entries : f if f.has_one_target && f.topic == e.topic && f.type == e.type && f.name == e.name]) > 1
+  ])
 }
 
 # Fails at plan time, before anything is created, naming the file and the key.
