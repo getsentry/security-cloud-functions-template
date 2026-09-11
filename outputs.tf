@@ -40,3 +40,13 @@ output "cloudrun_urls" {
   description = "URL of each deployed Cloud Run service."
   value       = module.cloudruns.service_urls
 }
+
+output "eventarc_topics" {
+  description = "For each Eventarc-triggered workflow, the Pub/Sub topic that fires it."
+  value       = module.workflows.eventarc_topics
+}
+
+output "pubsub_push_identities" {
+  description = "Service account Pub/Sub delivers as, per push target."
+  value       = module.pubsubs.push_identities
+}

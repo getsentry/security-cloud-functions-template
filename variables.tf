@@ -30,7 +30,7 @@ variable "region" {
   description = "The GCP region for regional resources (Cloud Functions, Workflows, Eventarc, Cloud Scheduler)."
 
   validation {
-    condition     = can(regex("^[a-z]+-[a-z]+[0-9]$", var.region))
+    condition     = can(regex("^[a-z]+-[a-z]+[0-9]+$", var.region))
     error_message = "region must look like us-west1 or europe-west4."
   }
 }
@@ -40,7 +40,7 @@ variable "zone" {
   description = "The GCP zone. Only used as the provider default; no resource in this template is zonal."
 
   validation {
-    condition     = can(regex("^[a-z]+-[a-z]+[0-9]-[a-z]$", var.zone))
+    condition     = can(regex("^[a-z]+-[a-z]+[0-9]+-[a-z]$", var.zone))
     error_message = "zone must look like us-west1-b."
   }
 }
@@ -94,9 +94,13 @@ variable "secrets" {
 
 variable "cloudrun_image_tag" {
   type        = string
-  description = "Tag of the Cloud Run container images to deploy. CI sets this to the commit SHA so every deploy is traceable and immutable; `latest` is only a convenience for local plans. A service can opt out entirely by setting `image:` in its terraform.yaml."
-  default     = "latest"
+  description = "Tag of the Cloud Run container images to deploy. CI sets this to the commit SHA of the images it just built. There is deliberately no default: images are only ever built and pushed by CI, so a local apply cannot know a tag that exists. `sbin/tf-plan` and `sbin/bootstrap` pass the current commit; for anything else use -var cloudrun_image_tag=<sha>. A service can opt out by setting `image:` in its terraform.yaml."
   nullable    = false
+
+  validation {
+    condition     = length(var.cloudrun_image_tag) > 0 && var.cloudrun_image_tag != "latest"
+    error_message = "cloudrun_image_tag must be a specific tag such as a commit SHA. CI never pushes `latest`, so deploying it would fail or, worse, serve a stale image."
+  }
 }
 
 variable "template_variables" {

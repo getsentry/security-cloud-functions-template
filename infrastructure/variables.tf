@@ -42,6 +42,12 @@ variable "staging_retention_days" {
 
 variable "image_versions_to_keep" {
   type        = number
-  description = "Container image versions retained per Cloud Run service in Artifact Registry. Older ones are deleted, so keep enough to roll back to."
+  description = "Most recent container image versions always retained per Cloud Run service, regardless of age. Keep enough to roll back to."
   default     = 20
+}
+
+variable "image_retention_days" {
+  type        = number
+  description = "Tagged container images older than this are deleted from Artifact Registry, except the most recent `image_versions_to_keep`."
+  default     = 90
 }

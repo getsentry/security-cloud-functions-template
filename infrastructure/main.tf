@@ -22,6 +22,8 @@ resource "google_storage_bucket" "staging_bucket" {
       type = "Delete"
     }
   }
+
+  depends_on = [google_project_service.services]
 }
 
 resource "google_storage_bucket_iam_binding" "staging-bucket-iam" {
@@ -59,6 +61,8 @@ resource "google_storage_bucket" "tf-state" {
   lifecycle {
     prevent_destroy = true
   }
+
+  depends_on = [google_project_service.services]
 }
 
 # SECURITY: only the apply identity may WRITE state, and this binding is

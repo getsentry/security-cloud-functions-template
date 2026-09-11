@@ -50,6 +50,8 @@ resource "google_project_iam_custom_role" "tf_secret_manager" {
     "secretmanager.secrets.getIamPolicy",
     "secretmanager.secrets.setIamPolicy",
   ]
+
+  depends_on = [google_project_service.services]
 }
 
 resource "google_project_iam_member" "apply_secret_manager" {
@@ -94,6 +96,8 @@ resource "google_project_iam_custom_role" "tf_plan_bucket_reader" {
   permissions = [
     "storage.buckets.get",
   ]
+
+  depends_on = [google_project_service.services]
 }
 
 resource "google_project_iam_member" "plan_bucket_reader" {

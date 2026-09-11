@@ -6,8 +6,13 @@ functions:
   - function-cron
 
 # Creates an Eventarc trigger (<name>-trigger) that runs this workflow whenever
-# a matching event fires. `type` is required; add more attributes to narrow it.
+# a message lands on the topic. `type` is required; add more attributes to
+# narrow it.
 workflow-trigger:
+  # A topic defined in pubsubs/ -- this example expects examples/pubsub-basic to
+  # be deployed. Omit it and Eventarc creates its own topic instead; find its
+  # name with `terraform output eventarc_topics`.
+  pubsub_topic: example-topic
   criteria:
     - attribute: type
       value: google.cloud.pubsub.topic.v1.messagePublished

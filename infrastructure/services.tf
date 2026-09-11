@@ -1,7 +1,9 @@
 # APIs this template needs enabled. No import needed -- enabling is idempotent.
 #
-# On a brand-new project these take a few minutes to propagate, so the first
-# `terraform apply` often fails partway through. Re-run it.
+# Everything else in this module has depends_on = [google_project_service.services]
+# so that on a brand-new project the service accounts, pool, buckets and registry
+# are not created in a race with the APIs they need. `sbin/bootstrap` also
+# pre-enables this list with gcloud, which waits for the operation to finish.
 locals {
   services = [
     "artifactregistry.googleapis.com",

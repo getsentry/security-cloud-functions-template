@@ -18,10 +18,12 @@ locals {
     dirname(f) => yamldecode(file("${path.module}/${f}"))
   }
 
-  # An empty `cloud-function-gen2:` in YAML decodes to null, which would blow up
-  # every lookup() downstream.
-  fn_cfg   = { for d, c in local.configs : d => try(c["cloud-function-gen2"], null) == null ? {} : c["cloud-function-gen2"] }
-  cron_cfg = { for d, c in local.configs : d => try(c["cron"], null) == null ? {} : c["cron"] }
+  # try(merge(x), {}) yields the block if present, {} if the key is absent OR
+  # the block is empty (YAML decodes `key:` to null). A plain conditional
+  # (`x == null ? {} : x`) fails type-checking because {} and an object with
+  # attributes are different types.
+  fn_cfg   = { for d, c in local.configs : d => try(merge(c["cloud-function-gen2"]), {}) }
+  cron_cfg = { for d, c in local.configs : d => try(merge(c["cron"]), {}) }
 
   # Anything not listed here is rejected by the preconditions below, so a typo
   # like `timeout:` for `execution_timeout:` cannot silently deploy the default.

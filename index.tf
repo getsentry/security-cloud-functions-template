@@ -53,18 +53,10 @@ module "cloudruns" {
   ]
 }
 
-module "workflows" {
-  source = "./workflows"
-
-  project = var.project
-  region  = var.region
-  owner   = var.owner
-
-  depends_on = [
-    module.infrastructure,
-    module.functions
-  ]
-}
+# Dependency order: infrastructure -> secrets -> functions, cloudruns -> pubsubs
+# -> workflows. Each loader receives the names of what earlier ones created, so
+# a reference in a terraform.yaml is checked at plan time rather than failing
+# at apply.
 
 module "pubsubs" {
   source = "./pubsubs"
@@ -74,6 +66,27 @@ module "pubsubs" {
   region          = var.region
   bucket_location = var.bucket_location
   owner           = var.owner
+
+  function_names = module.functions.function_names
+  function_urls  = module.functions.function_urls
+  cloudrun_names = module.cloudruns.service_names
+  cloudrun_urls  = module.cloudruns.service_urls
+
+  depends_on = [
+    module.infrastructure
+  ]
+}
+
+module "workflows" {
+  source = "./workflows"
+
+  project = var.project
+  region  = var.region
+  owner   = var.owner
+
+  function_names = module.functions.function_names
+  cloudrun_names = module.cloudruns.service_names
+  topic_names    = module.pubsubs.topic_names
 
   depends_on = [
     module.infrastructure

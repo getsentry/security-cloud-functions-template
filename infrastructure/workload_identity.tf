@@ -12,6 +12,8 @@ resource "google_service_account" "gha_cloud_functions_deployment" {
   description  = "Privileged SA for `terraform apply` (push to main only), owned by ${var.owner}, managed by Terraform"
   display_name = "gha-cloud-functions-deployment"
   project      = var.project
+
+  depends_on = [google_project_service.services]
 }
 
 # `terraform plan` executes attacker-controllable PR configuration, so this
@@ -23,6 +25,8 @@ resource "google_service_account" "gha_tf_plan" {
   description  = "Read-only SA for `terraform plan` on pull requests, owned by ${var.owner}, managed by Terraform"
   display_name = "gha-cf-tf-plan"
   project      = var.project
+
+  depends_on = [google_project_service.services]
 }
 
 resource "google_iam_workload_identity_pool" "gha_terraform_checker_pool" {
@@ -31,6 +35,8 @@ resource "google_iam_workload_identity_pool" "gha_terraform_checker_pool" {
   workload_identity_pool_id = "${local.gha_name}-pool"
   display_name              = "GHA Terraform Checker Pool"
   description               = "Identity pool for Terraform Plan GHA, owned by ${var.owner}, managed by Terraform"
+
+  depends_on = [google_project_service.services]
 }
 
 resource "google_iam_workload_identity_pool_provider" "gha_terraform_checker_provider" {
